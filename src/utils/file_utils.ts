@@ -1,6 +1,7 @@
 import path from "path";
 import os from "os";
 import fs from "fs/promises";
+import { getProjectEnv } from "@enconvo/api";
 
 const allowedDirectories = ['~', '~/Documents', '~/Downloads', '~/Desktop'].map(dir =>
     normalizePath(path.resolve(expandHome(dir)))
@@ -20,9 +21,10 @@ function normalizePath(p: string): string {
 
 export async function validatePath(requestedPath: string): Promise<string> {
     const expandedPath = expandHome(requestedPath);
+    const projectEnv = getProjectEnv();
     const absolute = path.isAbsolute(expandedPath)
         ? path.resolve(expandedPath)
-        : path.resolve(process.cwd(), expandedPath);
+        : path.resolve(projectEnv, expandedPath);
 
     const normalizedRequested = normalizePath(absolute);
 

@@ -1,6 +1,6 @@
 import { Response, RequestOptions } from '@enconvo/api';
 import fs from "fs/promises";
-import { validatePath } from './file_utils.ts';
+import { validatePath } from './utils/file_utils.ts';
 
 /**
  * Interface defining the expected options for writing a file

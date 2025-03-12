@@ -1,7 +1,7 @@
 import { Response, RequestOptions } from '@enconvo/api';
 import fs from "fs/promises";
 import path from "path";
-import { validatePath } from './file_utils.ts';
+import { validatePath } from './utils/file_utils.ts';
 
 /**
  * Interface for tree entry structure

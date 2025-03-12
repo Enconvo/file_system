@@ -1,7 +1,7 @@
 import { Response, RequestOptions } from '@enconvo/api';
 import fs from "fs/promises";
 import { createTwoFilesPatch } from 'diff';
-import { validatePath } from './file_utils.ts';
+import { validatePath } from './utils/file_utils.ts';
 
 
 interface Options extends RequestOptions {
@@ -23,6 +23,7 @@ export default async function main(request: Request): Promise<Response> {
 
     const validPath = await validatePath(options.path);
     const result = await applyFileEdits(validPath, options.edits, options.dryRun);
+
     return {
         type: "text",
         content: result,

@@ -1,4 +1,4 @@
-import { Response, Action, RequestOptions, res } from '@enconvo/api';
+import { Response, RequestOptions } from '@enconvo/api';
 import fs from "fs/promises";
 
 /**
@@ -45,7 +45,6 @@ async function getFileStats(filePath: string): Promise<FileInfo> {
  * @returns Response containing formatted file information
  */
 export default async function main(request: Request): Promise<Response> {
-    try {
         // Parse the request options
         const options: Options = await request.json();
         
@@ -61,20 +60,6 @@ export default async function main(request: Request): Promise<Response> {
         return {
             type: "text",
             content: formattedInfo,
-            actions: [
-                Action.Paste({ content: formattedInfo }),
-                Action.Copy({ content: formattedInfo })
-            ]
         };
-    } catch (error) {
-        // Handle any errors during info retrieval
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        return {
-            type: "text",
-            content: `Error getting file info: ${errorMessage}`,
-            actions: [
-                Action.Paste({ content: `Error: ${errorMessage}` })
-            ]
-        };
-    }
+
 }

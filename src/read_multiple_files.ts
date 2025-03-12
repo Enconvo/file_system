@@ -1,4 +1,4 @@
-import { Response, RequestOptions } from '@enconvo/api';
+import { Response, Action, RequestOptions, res } from '@enconvo/api';
 import fs from "fs/promises";
 import { validatePath } from './file_utils.ts';
 

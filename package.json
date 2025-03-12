@@ -14,7 +14,7 @@
   "commands": [
     {
       "name": "write_file",
-      "title": "Write File",
+      "title": "write File",
       "description": "Create a new file or completely overwrite an existing file with new content. Use with caution as it will overwrite existing files without warning. Handles text content with proper encoding. Only works within allowed directories.",
       "mode": "no-view",
       "icon": "icon.png",
@@ -40,7 +40,7 @@
     },
     {
       "name": "read_file",
-      "title": "Read File",
+      "title": "read File",
       "description": "Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot be read. Use this tool when you need to examine the contents of a single file. Only works within allowed directories.",
       "mode": "no-view",
       "icon": "icon.png",
@@ -85,7 +85,7 @@
     },
     {
       "name": "edit_file",
-      "title": "Edit File",
+      "title": "edit File",
       "description": "Make line-based edits to a text file. Each edit replaces exact line sequences with new content. Returns a git-style diff showing the changes made. Only works within allowed directories.",
       "mode": "no-view",
       "icon": "icon.png",
@@ -133,7 +133,7 @@
     },
     {
       "name": "create_directory",
-      "title": "Create Directory",
+      "title": "create directory",
       "description": "Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. If the directory already exists, this operation will succeed silently.",
       "mode": "no-view",
       "icon": "icon.png",
@@ -154,7 +154,7 @@
     },
     {
       "name": "list_directory",
-      "title": "List Directory",
+      "title": "list directory",
       "description": "Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes.",
       "mode": "no-view",
       "icon": "icon.png",
@@ -175,7 +175,7 @@
     },
     {
       "name": "directory_tree",
-      "title": "Directory Tree",
+      "title": "directory tree",
       "description": "Get a recursive tree view of files and directories as a JSON structure. Each entry includes 'name', 'type' (file/directory), and 'children' for directories.",
       "mode": "no-view",
       "icon": "icon.png",
@@ -196,7 +196,7 @@
     },
     {
       "name": "move_file",
-      "title": "Move File",
+      "title": "move file",
       "description": "Move or rename files and directories. Can move files between directories and rename them in a single operation. If the destination exists, the operation will fail.",
       "mode": "no-view",
       "icon": "icon.png",
@@ -222,7 +222,7 @@
     },
     {
       "name": "search_files",
-      "title": "Search Files",
+      "title": "search files",
       "description": "Recursively search for files and directories matching a pattern. Searches through all subdirectories from the starting path. The search is case-insensitive and matches partial names.",
       "mode": "no-view",
       "icon": "icon.png",
@@ -256,7 +256,7 @@
     },
     {
       "name": "get_file_info",
-      "title": "Get File Info",
+      "title": "get file info",
       "description": "Retrieve detailed metadata about a file or directory. Returns comprehensive information including size, creation time, last modified time, permissions, and type.",
       "mode": "no-view",
       "icon": "icon.png",

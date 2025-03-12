@@ -1,8 +1,10 @@
 import { Response, RequestOptions } from '@enconvo/api';
-import fs from "fs/promises";
-import path from "path";
-import { minimatch } from 'minimatch';
-import { validatePath } from './file_utils.ts';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { validatePath } from './utils/file_utils.ts';
+
+// Convert exec to promise-based
+const execAsync = promisify(exec);
 
 /**
  * Interface defining the expected options for file searching
@@ -14,7 +16,7 @@ interface Options extends RequestOptions {
 }
 
 /**
- * Recursively searches for files matching the pattern
+ * Search for files using ripgrep
  * @param rootPath Root directory to start search from
  * @param pattern Pattern to match against file names
  * @param excludePatterns Patterns to exclude from search
@@ -25,37 +27,37 @@ async function searchFiles(
     pattern: string,
     excludePatterns: string[] = []
 ): Promise<string[]> {
-    const results: string[] = [];
+    try {
+        // Build the ripgrep command
+        let command = `rg --files "${rootPath}"`;
 
-    async function search(currentPath: string) {
-        const entries = await fs.readdir(currentPath, { withFileTypes: true });
+        // Add exclude patterns if any
+        for (const excludePattern of excludePatterns) {
+            // Convert glob patterns to ripgrep compatible format
+            const rgPattern = excludePattern.includes('*')
+                ? excludePattern
+                : `**/${excludePattern}/**`;
+            command += ` --glob '!${rgPattern}'`;
+        }
 
-        for (const entry of entries) {
-            const fullPath = path.join(currentPath, entry.name);
+        // Add case-insensitive pattern matching
+        command += ` | rg -i "${pattern}"`;
 
-            // Check if path matches any exclude pattern
-            const relativePath = path.relative(rootPath, fullPath);
-            const shouldExclude = excludePatterns.some(pattern => {
-                const globPattern = pattern.includes('*') ? pattern : `**/${pattern}/**`;
-                return minimatch(relativePath, globPattern, { dot: true });
-            });
+        // Execute the ripgrep command
+        const { stdout } = await execAsync(command);
 
-            if (shouldExclude) {
-                continue;
-            }
-
-            if (entry.name.toLowerCase().includes(pattern.toLowerCase())) {
-                results.push(fullPath);
-            }
-
-            if (entry.isDirectory()) {
-                await search(fullPath);
+        // Split output into array and filter empty lines
+        return stdout.split('\n').filter(line => line.trim());
+    } catch (error: unknown) {
+        // Type guard for ExecException
+        if (error && typeof error === 'object' && 'code' in error) {
+            // If rg returns no results, it exits with code 1
+            if (error.code === 1 && !('stdout' in error)) {
+                return [];
             }
         }
+        throw error;
     }
-
-    await search(rootPath);
-    return results;
 }
 
 /**
@@ -64,25 +66,33 @@ async function searchFiles(
  * @returns Response containing matching file paths
  */
 export default async function main(request: Request): Promise<Response> {
-    // Parse the request options
-    const options: Options = await request.json();
+    try {
+        // Parse the request options
+        const options: Options = await request.json();
 
-    const validPath = await validatePath(options.path);
-    // Perform the search
-    const results = await searchFiles(
-        validPath,
-        options.pattern,
-        options.excludePatterns
-    );
+        const validPath = await validatePath(options.path);
 
-    // Format results
-    const formattedResults = results.length > 0
-        ? results.join("\n")
-        : "No matches found";
+        // Perform the search
+        const results = await searchFiles(
+            validPath,
+            options.pattern,
+            options.excludePatterns
+        );
 
-    // Return successful response
-    return {
-        type: "text",
-        content: formattedResults,
-    };
+        // Format results
+        const formattedResults = results.length > 0
+            ? results.join("\n")
+            : "No matches found";
+
+        // Return successful response
+        return {
+            type: "text",
+            content: formattedResults,
+        };
+    } catch (error: unknown) {
+        return {
+            type: "text",
+            content: `Error during search: ${error instanceof Error ? error.message : String(error)}`,
+        };
+    }
 } 
