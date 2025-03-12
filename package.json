@@ -1,0 +1,307 @@
+{
+  "$schema": "/Users/ysnows/Documents/Project/enconvo.com/public/schemas/extension.json",
+  "name": "file_system",
+  "version": "0.0.5",
+  "description": "File System",
+  "title": "File System",
+  "icon": "icon.png",
+  "author": "Enconvo",
+  "categories": [
+    "Tool"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "commands": [
+    {
+      "name": "write_file",
+      "title": "Write File",
+      "description": "Create a new file or completely overwrite an existing file with new content. Use with caution as it will overwrite existing files without warning. Handles text content with proper encoding. Only works within allowed directories.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The file path where content will be written"
+          },
+          "content": {
+            "type": "string",
+            "description": "The content to write to the specified file"
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ]
+      }
+    },
+    {
+      "name": "read_file",
+      "title": "Read File",
+      "description": "Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot be read. Use this tool when you need to examine the contents of a single file. Only works within allowed directories.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The file path to read from"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "read_multiple_files",
+      "title": "Read Multiple Files",
+      "description": "Read the contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files. Each file's content is returned with its path as a reference. Failed reads for individual files won't stop the entire operation.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of file paths to read"
+          }
+        },
+        "required": [
+          "paths"
+        ]
+      }
+    },
+    {
+      "name": "edit_file",
+      "title": "Edit File",
+      "description": "Make line-based edits to a text file. Each edit replaces exact line sequences with new content. Returns a git-style diff showing the changes made. Only works within allowed directories.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The file path to edit"
+          },
+          "edits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "oldText": {
+                  "type": "string",
+                  "description": "Text to search for - must match exactly"
+                },
+                "newText": {
+                  "type": "string",
+                  "description": "Text to replace with"
+                }
+              },
+              "required": [
+                "oldText",
+                "newText"
+              ]
+            },
+            "description": "Array of edit operations to perform"
+          },
+          "dryRun": {
+            "type": "boolean",
+            "description": "Preview changes using git-style diff format without making actual changes",
+            "default": false
+          }
+        },
+        "required": [
+          "path",
+          "edits"
+        ]
+      }
+    },
+    {
+      "name": "create_directory",
+      "title": "Create Directory",
+      "description": "Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. If the directory already exists, this operation will succeed silently.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The directory path to create"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "list_directory",
+      "title": "List Directory",
+      "description": "Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The directory path to list"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "directory_tree",
+      "title": "Directory Tree",
+      "description": "Get a recursive tree view of files and directories as a JSON structure. Each entry includes 'name', 'type' (file/directory), and 'children' for directories.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The directory path to get tree structure for"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "move_file",
+      "title": "Move File",
+      "description": "Move or rename files and directories. Can move files between directories and rename them in a single operation. If the destination exists, the operation will fail.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "The source file or directory path"
+          },
+          "destination": {
+            "type": "string",
+            "description": "The destination file or directory path"
+          }
+        },
+        "required": [
+          "source",
+          "destination"
+        ]
+      }
+    },
+    {
+      "name": "search_files",
+      "title": "Search Files",
+      "description": "Recursively search for files and directories matching a pattern. Searches through all subdirectories from the starting path. The search is case-insensitive and matches partial names.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The directory path to start searching from"
+          },
+          "pattern": {
+            "type": "string",
+            "description": "The pattern to search for in file and directory names"
+          },
+          "excludePatterns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Patterns to exclude from search results",
+            "default": []
+          }
+        },
+        "required": [
+          "path",
+          "pattern"
+        ]
+      }
+    },
+    {
+      "name": "get_file_info",
+      "title": "Get File Info",
+      "description": "Retrieve detailed metadata about a file or directory. Returns comprehensive information including size, creation time, last modified time, permissions, and type.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The file or directory path to get information about"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    }
+  ],
+  "dependencies": {
+    "@enconvo/api": "link:/Users/ysnows/Documents/Project/enconvo.nodejs/enconvo_api",
+    "@lydell/node-pty": "^1.0.3",
+    "axios": "^1.7.9",
+    "diff": "^5.1.0",
+    "glob": "^10.3.10",
+    "minimatch": "^10.0.1",
+    "zod-to-json-schema": "^3.23.5"
+  },
+  "devDependencies": {
+    "@types/diff": "^5.0.9",
+    "@types/minimatch": "^5.1.2",
+    "shx": "^0.3.4",
+    "@types/node": "^22.10.2",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "scripts": {
+    "lint": "eslint src",
+    "lint:fix": "npm run lint --fix",
+    "format": "prettier --write \"**/*.ts\"",
+    "format:check": "prettier --list-different \"**/*.ts\"",
+    "build": "enconvo",
+    "dev": "enconvo --dev"
+  },
+  "minAppVersion": "1.8.8"
+}
