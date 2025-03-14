@@ -19,8 +19,10 @@ export default async function main(request: Request): Promise<Response> {
     // Parse the request options
     const options: Options = await request.json();
 
+    console.log("write file", options);
     // Ensure the directory exists
     const validPath = await validatePath(options.path);
+    console.log("validPath", validPath);
 
     // Write the file
     await fs.writeFile(validPath, options.content, "utf-8");
