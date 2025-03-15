@@ -21,6 +21,7 @@ export default async function main(request: Request): Promise<Response> {
 
     const options: Options = await request.json();
 
+
     const validPath = await validatePath(options.path);
     const result = await applyFileEdits(validPath, options.edits, options.dryRun);
 
