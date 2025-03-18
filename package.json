@@ -132,8 +132,7 @@
         },
         "required": [
           "todoFilePath",
-          "edits",
-          "task_description"
+          "edits"
         ]
       }
     },
@@ -208,6 +207,31 @@
         },
         "required": [
           "path"
+        ]
+      }
+    },
+    {
+      "name": "create_multiple_directories",
+      "title": "create multiple directories",
+      "description": "Create multiple new directories or ensure multiple directories exist. Can create multiple nested directories in one operation. If the directory already exists, this operation will succeed silently.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "paths": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "The directory path to create"
+            },
+            "description": "Array of directory paths to create"
+          }
+        },
+        "required": [
+          "paths"
         ]
       }
     },
