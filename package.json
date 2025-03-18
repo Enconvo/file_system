@@ -30,11 +30,16 @@
           "content": {
             "type": "string",
             "description": "The content to write to the specified file"
+          },
+          "task_description": {
+            "type": "string",
+            "description": "The concise description of this task with a maximum of 100 characters"
           }
         },
         "required": [
           "path",
-          "content"
+          "content",
+          "task_description"
         ]
       }
     },
@@ -84,6 +89,55 @@
       }
     },
     {
+      "name": "update_plan",
+      "title": "update todo.md",
+      "description": "Immediately update the plan when previous todo items are completed. Updates the Next Goal and Next Step in the plan, following a step-by-step logical approach , strictly adhere to the original plan without adding new todo items",
+      "mode": "no-view",
+      "icon": "plan.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "todoFilePath": {
+            "type": "string",
+            "description": "The todo.md file path which contains todo list  to edit"
+          },
+          "edits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "oldTodoText": {
+                  "type": "string",
+                  "description": "The todo item to search for - must match exactly"
+                },
+                "newTodoText": {
+                  "type": "string",
+                  "description": "The todo item to replace with"
+                }
+              },
+              "required": [
+                "oldTodoText",
+                "newTodoText"
+              ]
+            },
+            "description": "Array of todo item edit operations to perform. Try to complete multiple todo item edits in a single operation"
+          },
+          "dryRun": {
+            "type": "boolean",
+            "description": "Preview changes using git-style diff format without making actual changes",
+            "default": false
+          }
+        },
+        "required": [
+          "todoFilePath",
+          "edits",
+          "task_description"
+        ]
+      }
+    },
+    {
       "name": "edit_file",
       "title": "edit File",
       "description": "Make line-based edits to a text file. Each edit replaces exact line sequences with new content. Returns a git-style diff showing the changes made. Only works within allowed directories.",
@@ -94,6 +148,10 @@
       "parameters": {
         "type": "object",
         "properties": {
+          "task_description": {
+            "type": "string",
+            "description": "The concise description of this task with a maximum of 100 characters"
+          },
           "path": {
             "type": "string",
             "description": "The file path to edit"
@@ -127,7 +185,8 @@
         },
         "required": [
           "path",
-          "edits"
+          "edits",
+          "task_description"
         ]
       }
     },

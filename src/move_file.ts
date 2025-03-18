@@ -20,15 +20,18 @@ interface Options extends RequestOptions {
 export default async function main(request: Request): Promise<Response> {
     // Parse the request options
     const options: Options = await request.json();
-    console.log("move file",options);
+    console.log("move file", options);
 
     const validSourcePath = await validatePath(options.source);
+    if (!existsSync(validSourcePath)) {
+        throw new Error("source file does not exist");
+    }
     const validDestPath = await validatePath(options.destination);
     // Ensure destination directory exists
+
     const destDir = path.dirname(validDestPath);
-    await fs.mkdir(destDir, { recursive: true });
-    if(!existsSync(validSourcePath)) {
-        throw new Error("source file does not exist");
+    if (!existsSync(destDir)) {
+        await fs.mkdir(destDir, { recursive: true });
     }
 
     // Move/rename the file
