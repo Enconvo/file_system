@@ -1,4 +1,4 @@
-import { Response, RequestOptions } from '@enconvo/api';
+import { Response, RequestOptions, FileUtil } from '@enconvo/api';
 import fs from "fs/promises";
 import { createTwoFilesPatch } from 'diff';
 import { validatePath } from './utils/file_utils.ts';
@@ -11,6 +11,7 @@ interface Options extends RequestOptions {
     edits: Array<{ oldText: string, newText: string }>;
     // If true, returns a diff preview without making actual changes
     dryRun: boolean;
+    description: string;
 }
 /**
  * Main function to handle file editing operations
@@ -24,6 +25,7 @@ export default async function main(request: Request): Promise<Response> {
 
     const validPath = await validatePath(options.path);
     const result = await applyFileEdits(validPath, options.edits, options.dryRun);
+    await FileUtil.saveFileDescription(validPath, options.description);
 
     return {
         type: "text",

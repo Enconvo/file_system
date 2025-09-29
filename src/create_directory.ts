@@ -1,4 +1,4 @@
-import { Response, RequestOptions } from '@enconvo/api';
+import { Response, RequestOptions, FileUtil } from '@enconvo/api';
 import fs from "fs/promises";
 import { validatePath } from './utils/file_utils.ts';
 
@@ -7,6 +7,7 @@ import { validatePath } from './utils/file_utils.ts';
  */
 interface Options extends RequestOptions {
     path: string;  // Path where to create the directory
+    description: string; // Description of the directory
 }
 
 /**
@@ -23,6 +24,8 @@ export default async function main(request: Request): Promise<Response> {
     await fs.mkdir(validPath, { recursive: true });
 
     const successMessage = `Successfully created directory ${options.path}`;
+
+    await FileUtil.saveFileDescription(validPath, options.description);
 
     // Return successful response
     return {

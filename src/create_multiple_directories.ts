@@ -1,4 +1,4 @@
-import { Response, RequestOptions } from '@enconvo/api';
+import { Response, RequestOptions, FileUtil } from '@enconvo/api';
 import fs from "fs/promises";
 import { validatePath } from './utils/file_utils.ts';
 
@@ -6,7 +6,10 @@ import { validatePath } from './utils/file_utils.ts';
  * Interface defining the expected options for creating a directory
  */
 interface Options extends RequestOptions {
-    paths: string[];  // Array of paths to create
+    paths: {
+        path: string;
+        description: string;
+    }[];
 }
 
 /**
@@ -18,11 +21,15 @@ export default async function main(request: Request): Promise<Response> {
     // Parse the request options
     const options: Options = await request.json();
 
-    const validPaths = await Promise.all(options.paths.map(async (path) => await validatePath(path)));
+    const validPaths = await Promise.all(options.paths.map(async (path) => await validatePath(path.path)));
     // Create directory with recursive option to handle nested paths
     await Promise.all(validPaths.map(async (path) => await fs.mkdir(path, { recursive: true })));
 
-    const successMessage = `Successfully created directories ${options.paths.join(", ")}`;
+    for (const path of options.paths) {
+        await FileUtil.saveFileDescription(path.path, path.description);
+    }
+
+    const successMessage = `Successfully created directories ${options.paths.map((path) => path.path).join(", ")}`;
 
     // Return successful response
     return {

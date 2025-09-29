@@ -1,4 +1,4 @@
-import { Response, RequestOptions } from '@enconvo/api';
+import { Response, RequestOptions, FileUtil } from '@enconvo/api';
 import fs from "fs/promises";
 import { validatePath } from './utils/file_utils.ts';
 import { homedir } from 'os';
@@ -9,6 +9,7 @@ import { homedir } from 'os';
 interface Options extends RequestOptions {
     path: string;     // Path where to write the file
     content: string;  // Content to write to the file
+    description: string; // Description of the file
 }
 
 /**
@@ -21,7 +22,7 @@ export default async function main(request: Request): Promise<Response> {
     let options: Options = await request.json();
 
 
-    if(!options.path || !options.content) {
+    if (!options.path || !options.content) {
         throw new Error("please provide path and content");
     }
 
@@ -32,6 +33,8 @@ export default async function main(request: Request): Promise<Response> {
 
     // Write the file
     await fs.writeFile(validPath, options.content, "utf-8");
+
+    await FileUtil.saveFileDescription(validPath, options.description);
 
     const successMessage = `Successfully wrote to ${validPath}`;
 

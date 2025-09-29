@@ -11,8 +11,7 @@ const execAsync = promisify(exec);
  */
 interface Options extends RequestOptions {
     path: string;                 // Root path to start search from
-    pattern: string;             // Search pattern to match against
-    excludePatterns?: string[];  // Patterns to exclude from search
+    rg_command: string;           // The rg command to use for searching
 }
 
 /**
@@ -24,24 +23,15 @@ interface Options extends RequestOptions {
  */
 async function searchFiles(
     rootPath: string,
-    pattern: string,
-    excludePatterns: string[] = []
+    rg_command: string,
 ): Promise<string[]> {
     try {
-        // Build the ripgrep command
-        let command = `rg --files "${rootPath}"`;
+        // Execute the provided ripgrep command directly
+        // This allows for more flexible searching using the full power of ripgrep
+        const command = `cd "${rootPath}" && ${rg_command}`;
 
-        // Add exclude patterns if any
-        for (const excludePattern of excludePatterns) {
-            // Convert glob patterns to ripgrep compatible format
-            const rgPattern = excludePattern.includes('*')
-                ? excludePattern
-                : `**/${excludePattern}/**`;
-            command += ` --glob '!${rgPattern}'`;
-        }
-
-        // Add case-insensitive pattern matching
-        command += ` | rg -i "${pattern}"`;
+        // Log the command for debugging purposes
+        console.log(`Executing command: ${command}`);
 
         // Execute the ripgrep command
         const { stdout } = await execAsync(command);
@@ -53,9 +43,11 @@ async function searchFiles(
         if (error && typeof error === 'object' && 'code' in error) {
             // If rg returns no results, it exits with code 1
             if (error.code === 1 && !('stdout' in error)) {
+                // Return empty array for no results
                 return [];
             }
         }
+        // Re-throw other errors
         throw error;
     }
 }
@@ -75,8 +67,7 @@ export default async function main(request: Request): Promise<Response> {
         // Perform the search
         const results = await searchFiles(
             validPath,
-            options.pattern,
-            options.excludePatterns
+            options.rg_command
         );
 
         // Format results

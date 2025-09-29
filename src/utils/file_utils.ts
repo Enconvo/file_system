@@ -11,7 +11,6 @@ export function expandHome(filepath: string): string {
     return filepath;
 }
 
-
 export async function validatePath(requestedPath: string): Promise<string> {
     const expandedPath = expandHome(requestedPath);
     const projectEnv = getProjectEnv();
