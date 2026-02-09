@@ -36,6 +36,8 @@ export default async function main(request: Request): Promise<EnconvoResponse> {
             result = content[0].contents.map((item) => item.text).join("\n")
         }
 
+        // console.log("content[0].contents",JSON.stringify(content[0].contents,null,2))
+
         return Response.json({
             result
         })

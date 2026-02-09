@@ -1,7 +1,7 @@
 {
   "$schema": "/Users/ysnows/Documents/Project/enconvo.com/public/schemas/extension.json",
   "name": "file_system",
-  "version": "0.0.67",
+  "version": "0.0.96",
   "description": "File System",
   "title": "File System",
   "icon": "icon.png",
@@ -94,15 +94,7 @@
           "path"
         ]
       },
-      "preferences": [
-        {
-          "name": "chunk_enable",
-          "title": "Chunk Enable",
-          "description": "Whether to chunk the file",
-          "default": false,
-          "type": "checkbox"
-        }
-      ]
+      "preferences": []
     },
     {
       "name": "read_multiple_files",
@@ -367,9 +359,9 @@
       }
     },
     {
-      "name": "search_files",
-      "title": "search files",
-      "description": "Search files in the directory using rg command",
+      "name": "grep",
+      "title": "Grep",
+      "description": "- Fast content search tool that works with any codebase size\n- Searches file contents using regular expressions\n- Supports full regex syntax (e.g. \"log.*Error\", \"function\\s+\\w+\", etc.)\n- Filter files by pattern with the include parameter (e.g. \"*.js\", \"*.{ts,tsx}\")\n- Returns file paths and line numbers with at least one match sorted by modification time\n- Use this tool when you need to find files containing specific patterns\n- If you need to identify/count the number of matches within files, use the Bash tool with `rg` (ripgrep) directly. Do NOT use `grep`.\n- When you are doing an open-ended search that may require multiple rounds of globbing and grepping, use the Task tool instead",
       "mode": "no-view",
       "icon": "icon.png",
       "commandType": "function",
@@ -377,18 +369,49 @@
       "parameters": {
         "type": "object",
         "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "The regex pattern to search for in file contents"
+          },
           "path": {
             "type": "string",
-            "description": "The directory path to start searching from"
+            "description": "The directory to search in. Defaults to the current working directory.",
+            "nullable": true
           },
-          "rg_command": {
+          "include": {
             "type": "string",
-            "description": "The rg command to use for searching"
+            "description": "File pattern to include in the search (e.g. \"*.js\", \"*.{ts,tsx}\")",
+            "nullable": true
           }
         },
         "required": [
-          "path",
-          "rg_command"
+          "pattern"
+        ]
+      }
+    },
+    {
+      "name": "glob",
+      "title": "Glob",
+      "description": "- Fast file pattern matching tool that works with any codebase size\n- Supports glob patterns like \"**/*.js\" or \"src/**/*.ts\"\n- Returns matching file paths sorted by modification time\n- Use this tool when you need to find files by name patterns\n- When you are doing an open-ended search that may require multiple rounds of globbing and grepping, use the Task tool instead\n- You have the capability to call multiple tools in a single response. It is always better to speculatively perform multiple searches as a batch that are potentially useful.",
+      "mode": "no-view",
+      "icon": "icon.png",
+      "commandType": "function",
+      "showInCommandList": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "The glob pattern to match files against"
+          },
+          "path": {
+            "type": "string",
+            "description": "The directory to search in. If not specified, the current working directory will be used. IMPORTANT: Omit this field to use the default directory. DO NOT enter \"undefined\" or \"null\" - simply omit it for the default behavior. Must be a valid directory path if provided.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "pattern"
         ]
       }
     },
