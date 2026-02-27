@@ -1,30 +1,103 @@
-import { Response, RequestOptions } from '@enconvo/api';
+import { AttachmentUtils, RequestOptions, EnconvoResponse, ChatMessageContent, Runtime } from '@enconvo/api';
 import fs from "fs/promises";
+import path from "path";
 import { validatePath } from './utils/file_utils.ts';
 
-/**
- * Interface defining the expected options for the read file operation
- */
 interface Options extends RequestOptions {
-    path: string;  // Path to the file to be read
+    path: string;
+    chunk_enable?: boolean;
 }
 
-/**
- * Main function to handle file reading operations
- * @param request The incoming request containing file path information
- * @returns Response containing the file contents or error message
- */
-export default async function main(request: Request): Promise<Response> {
-    // Parse the request options
+const DOCUMENT_EXTS = new Set([
+    '.pdf', '.epub', '.docx', '.doc', '.xlsx', '.xls',
+    '.pptx', '.ppt', '.odt', '.ods', '.odp', '.rtf'
+]);
+
+const IMAGE_EXTS = new Set([
+    '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg',
+    '.webp', '.ico', '.tiff', '.tif', '.heic', '.heif'
+]);
+
+const AUDIO_EXTS = new Set([
+    '.mp3', '.wav', '.ogg', '.flac', '.aac', '.m4a', '.wma'
+]);
+
+const VIDEO_EXTS = new Set([
+    '.mp4', '.avi', '.mov', '.wmv', '.flv', '.mkv', '.webm', '.m4v'
+]);
+
+function getFileType(filePath: string): 'text' | 'document' | 'image' | 'audio' | 'video' {
+    const ext = path.extname(filePath).toLowerCase();
+    if (DOCUMENT_EXTS.has(ext)) return 'document';
+    if (IMAGE_EXTS.has(ext)) return 'image';
+    if (AUDIO_EXTS.has(ext)) return 'audio';
+    if (VIDEO_EXTS.has(ext)) return 'video';
+    return 'text';
+}
+
+export default async function main(request: Request): Promise<EnconvoResponse> {
     const options: Options = await request.json();
-
+    const { chunk_enable } = options;
     const validPath = await validatePath(options.path);
-    // Read the file contents
-    const content = await fs.readFile(validPath, 'utf-8');
+    const fileType = getFileType(validPath);
 
-    // Return successful response with file contents
-    return {
-        type: "text",
-        content: content
-    };
+    const isInteractiveMode = Runtime.isInteractiveMode();
+    const fileUrl = `file://${validPath}`;
+
+    switch (fileType) {
+        case 'image': {
+            const contents: ChatMessageContent[] = [
+                ChatMessageContent.imageUrl(fileUrl)
+            ];
+            return EnconvoResponse.content(contents);
+        }
+
+        case 'audio': {
+            const contents: ChatMessageContent[] = [
+                ChatMessageContent.audio(fileUrl)
+            ];
+            return EnconvoResponse.content(contents);
+        }
+
+        case 'video': {
+            const contents: ChatMessageContent[] = [
+                ChatMessageContent.video(fileUrl)
+            ];
+            return EnconvoResponse.content(contents);
+        }
+
+        case 'document': {
+            const content = await AttachmentUtils.getAttachmentsReadableContent({
+                files: [validPath]
+            });
+
+            if (!isInteractiveMode) {
+                let result;
+                if (chunk_enable) {
+                    result = { contents: content[0].contents };
+                } else {
+                    result = content[0].contents.map((item) => item.text).join("\n");
+                }
+                return Response.json({ result });
+            }
+
+            const textContent = content[0].contents.map((item) => item.text).join("\n");
+            return EnconvoResponse.content([
+                ChatMessageContent.text(textContent)
+            ]);
+        }
+
+        case 'text':
+        default: {
+            const text = await fs.readFile(validPath, 'utf-8');
+
+            if (!isInteractiveMode) {
+                return Response.json({ result: text });
+            }
+
+            return EnconvoResponse.content([
+                ChatMessageContent.text(text)
+            ]);
+        }
+    }
 } 
