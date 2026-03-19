@@ -13,7 +13,7 @@ export function expandHome(filepath: string): string {
 
 export async function validatePath(requestedPath: string): Promise<string> {
     const expandedPath = expandHome(requestedPath);
-    const projectEnv = getProjectEnv();
+    const projectEnv = await getProjectEnv();
     const absolute = path.isAbsolute(expandedPath)
         ? path.resolve(expandedPath)
         : path.resolve(projectEnv, expandedPath);

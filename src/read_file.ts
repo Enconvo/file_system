@@ -42,7 +42,7 @@ export default async function main(request: Request): Promise<EnconvoResponse> {
     const fileType = getFileType(validPath);
 
     const isInteractiveMode = Runtime.isInteractiveMode();
-    const fileUrl = `file://${validPath}`;
+    const fileUrl = validPath;
 
     switch (fileType) {
         case 'image': {

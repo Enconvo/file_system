@@ -1,8 +1,8 @@
 {
   "$schema": "/Users/ysnows/Documents/Project/enconvo.com/public/schemas/extension.json",
   "name": "file_system",
-  "version": "0.0.101",
-  "description": "File System",
+  "version": "0.0.122",
+  "description": "File system tools for AI agents: read, write, and edit files, search file contents with ripgrep (grep), and find files by glob patterns across text, documents, images, audio, and video.",
   "title": "File System",
   "icon": "icon.png",
   "author": "Enconvo",
@@ -19,6 +19,7 @@
       "mode": "no-view",
       "icon": "icon.png",
       "commandType": "function",
+      "hidden": true,
       "showInCommandList": false,
       "parameters": {
         "type": "object",
@@ -50,6 +51,7 @@
       "mode": "no-view",
       "icon": "icon.png",
       "commandType": "function",
+      "hidden": true,
       "showInCommandList": false,
       "parameters": {
         "type": "object",
@@ -65,67 +67,6 @@
         },
         "required": [
           "path",
-          "description"
-        ]
-      }
-    },
-    {
-      "name": "read_document_type_file",
-      "title": "read document type file",
-      "description": "get the readable content of a document type file, support pdf,epub, word, excel, ppt, csv, video, audio, markdown, or other text based files , etc.",
-      "mode": "no-view",
-      "icon": "icon.png",
-      "commandType": "function",
-      "showInCommandList": false,
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "path": {
-            "type": "string",
-            "description": "The file path to read from"
-          },
-          "chunk_enable": {
-            "type": "boolean",
-            "description": "Whether to chunk the file",
-            "default": false
-          },
-          "description": {
-            "type": "string",
-            "description": "The concise description of this task with a maximum of 100 characters"
-          }
-        },
-        "required": [
-          "path",
-          "description"
-        ]
-      },
-      "preferences": []
-    },
-    {
-      "name": "read_multiple_files",
-      "title": "Read Multiple Files",
-      "description": "Read the original contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files. Each file's content is returned with its path as a reference. Failed reads for individual files won't stop the entire operation.",
-      "mode": "no-view",
-      "icon": "icon.png",
-      "commandType": "function",
-      "showInCommandList": false,
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "paths": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of file paths to read"
-          },
-          "description": {
-            "type": "string",
-            "description": "The concise description of this task with a maximum of 100 characters"
-          }
-        },
-        "required": [
-          "paths",
           "description"
         ]
       }
@@ -137,6 +78,7 @@
       "mode": "no-view",
       "icon": "icon.png",
       "commandType": "function",
+      "hidden": true,
       "showInCommandList": false,
       "parameters": {
         "type": "object",
@@ -184,157 +126,13 @@
       }
     },
     {
-      "name": "create_directory",
-      "title": "create directory",
-      "description": "Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. If the directory already exists, this operation will succeed silently.",
-      "mode": "no-view",
-      "icon": "icon.png",
-      "commandType": "function",
-      "showInCommandList": false,
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "path": {
-            "type": "string",
-            "description": "The directory path to create"
-          },
-          "description": {
-            "type": "string",
-            "description": "The concise description of this task with a maximum of 100 characters"
-          }
-        },
-        "required": [
-          "path",
-          "description"
-        ]
-      }
-    },
-    {
-      "name": "create_multiple_directories",
-      "title": "create multiple directories",
-      "description": "Create multiple new directories or ensure multiple directories exist. Can create multiple nested directories in one operation. If the directory already exists, this operation will succeed silently.",
-      "mode": "no-view",
-      "icon": "icon.png",
-      "commandType": "function",
-      "showInCommandList": false,
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "paths": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string",
-                  "description": "The directory path to create"
-                },
-                "description": {
-                  "type": "string",
-                  "description": "The concise description of this task with a maximum of 100 characters"
-                }
-              },
-              "required": [
-                "path",
-                "description"
-              ]
-            },
-            "description": "Array of directory paths to create"
-          }
-        },
-        "required": [
-          "paths"
-        ]
-      }
-    },
-    {
-      "name": "list_directory",
-      "title": "list directory",
-      "description": "Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes.",
-      "mode": "no-view",
-      "icon": "icon.png",
-      "commandType": "function",
-      "showInCommandList": false,
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "path": {
-            "type": "string",
-            "description": "The directory path to list"
-          },
-          "description": {
-            "type": "string",
-            "description": "The concise description of this task with a maximum of 100 characters"
-          }
-        },
-        "required": [
-          "path"
-        ]
-      }
-    },
-    {
-      "name": "directory_tree",
-      "title": "directory tree",
-      "description": "Get a recursive tree view of files and directories as a JSON structure. Each entry includes 'name', 'type' (file/directory), and 'children' for directories.",
-      "mode": "no-view",
-      "icon": "icon.png",
-      "commandType": "function",
-      "showInCommandList": false,
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "path": {
-            "type": "string",
-            "description": "The directory path to get tree structure for"
-          },
-          "description": {
-            "type": "string",
-            "description": "The concise description of this task with a maximum of 100 characters"
-          }
-        },
-        "required": [
-          "path"
-        ]
-      }
-    },
-    {
-      "name": "move_file",
-      "title": "move file",
-      "description": "Move or rename files and directories. Can move files between directories and rename them in a single operation. If the destination exists, the operation will fail.",
-      "mode": "no-view",
-      "icon": "icon.png",
-      "commandType": "function",
-      "showInCommandList": false,
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "source": {
-            "type": "string",
-            "description": "The source file or directory path"
-          },
-          "destination": {
-            "type": "string",
-            "description": "The destination file or directory path"
-          },
-          "description": {
-            "type": "string",
-            "description": "The concise description of this task with a maximum of 100 characters"
-          }
-        },
-        "required": [
-          "source",
-          "destination",
-          "description"
-        ]
-      }
-    },
-    {
       "name": "grep",
       "title": "Grep",
       "description": "- Fast content search tool that works with any codebase size\n- Searches file contents using regular expressions\n- Supports full regex syntax (e.g. \"log.*Error\", \"function\\s+\\w+\", etc.)\n- Filter files by pattern with the include parameter (e.g. \"*.js\", \"*.{ts,tsx}\")\n- Returns file paths and line numbers with at least one match sorted by modification time\n- Use this tool when you need to find files containing specific patterns\n- If you need to identify/count the number of matches within files, use the Bash tool with `rg` (ripgrep) directly. Do NOT use `grep`.\n- When you are doing an open-ended search that may require multiple rounds of globbing and grepping, use the Task tool instead",
       "mode": "no-view",
       "icon": "icon.png",
       "commandType": "function",
+      "hidden": true,
       "showInCommandList": false,
       "parameters": {
         "type": "object",
@@ -371,6 +169,7 @@
       "mode": "no-view",
       "icon": "icon.png",
       "commandType": "function",
+      "hidden": true,
       "showInCommandList": false,
       "parameters": {
         "type": "object",
@@ -394,35 +193,10 @@
           "description"
         ]
       }
-    },
-    {
-      "name": "get_file_info",
-      "title": "get file info",
-      "description": "Retrieve detailed metadata about a file or directory. Returns comprehensive information including size, creation time, last modified time, permissions, and type.",
-      "mode": "no-view",
-      "icon": "icon.png",
-      "commandType": "function",
-      "showInCommandList": false,
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "path": {
-            "type": "string",
-            "description": "The file or directory path to get information about"
-          },
-          "description": {
-            "type": "string",
-            "description": "The concise description of this task with a maximum of 100 characters"
-          }
-        },
-        "required": [
-          "path"
-        ]
-      }
     }
   ],
   "dependencies": {
-    "@enconvo/api": "link:/Users/ysnows/Documents/Project/enconvo.nodejs/enconvo_api",
+    "@enconvo/api": "link:../../enconvo.nodejs/enconvo_api",
     "@lydell/node-pty": "^1.0.3",
     "axios": "^1.7.9",
     "diff": "^5.1.0",
@@ -445,8 +219,8 @@
     "lint:fix": "npm run lint --fix",
     "format": "prettier --write \"**/*.ts\"",
     "format:check": "prettier --list-different \"**/*.ts\"",
-    "build": "enconvo",
-    "dev": "enconvo --dev"
+    "build": "enconvo dev",
+    "dev": "enconvo dev --dev"
   },
   "minAppVersion": "1.8.8"
 }

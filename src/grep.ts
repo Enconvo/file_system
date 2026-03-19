@@ -153,7 +153,7 @@ export default async function main(request: Request): Promise<EnconvoResponse> {
         }
 
         // Resolve search path
-        const projectEnv = getProjectEnv();
+        const projectEnv = await getProjectEnv();
         let searchPath = options.path ?? projectEnv;
         if (!path.isAbsolute(searchPath)) {
             searchPath = path.resolve(projectEnv, searchPath);

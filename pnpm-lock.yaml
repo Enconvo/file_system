@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@enconvo/api':
-        specifier: link:/Users/ysnows/Documents/Project/enconvo.nodejs/enconvo_api
+        specifier: link:../../enconvo.nodejs/enconvo_api
         version: link:../../enconvo.nodejs/enconvo_api
       '@lydell/node-pty':
         specifier: ^1.0.3
