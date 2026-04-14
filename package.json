@@ -1,7 +1,7 @@
 {
   "$schema": "/Users/ysnows/Documents/Project/enconvo.com/public/schemas/extension.json",
   "name": "file_system",
-  "version": "0.0.122",
+  "version": "0.0.130",
   "description": "File system tools for AI agents: read, write, and edit files, search file contents with ripgrep (grep), and find files by glob patterns across text, documents, images, audio, and video.",
   "title": "File System",
   "icon": "icon.png",
@@ -208,10 +208,10 @@
     "@types/diff": "^5.0.9",
     "@types/minimatch": "^5.1.2",
     "shx": "^0.3.4",
-    "@types/node": "^22.10.2",
+    "@types/node": "^25.5.0",
     "eslint": "^9.17.0",
     "prettier": "^3.4.2",
-    "tsup": "^8.3.5",
+    "tsup": "^8.5.1",
     "typescript": "^5.7.2"
   },
   "scripts": {

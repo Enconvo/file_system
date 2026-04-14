@@ -1,7 +1,11 @@
-import { AttachmentUtils, RequestOptions, EnconvoResponse, ChatMessageContent, Runtime } from '@enconvo/api';
+import { AttachmentUtils, RequestOptions, EnconvoResponse, ChatMessageContent, Runtime, NativeAPI } from '@enconvo/api';
 import fs from "fs/promises";
 import path from "path";
+import { execFile } from "child_process";
+import { promisify } from "util";
 import { validatePath } from './utils/file_utils.ts';
+
+const execFileAsync = promisify(execFile);
 
 interface Options extends RequestOptions {
     path: string;
@@ -39,6 +43,19 @@ export default async function main(request: Request): Promise<EnconvoResponse> {
     const options: Options = await request.json();
     const { chunk_enable } = options;
     const validPath = await validatePath(options.path);
+
+    // Check if path is a directory
+    const stat = await fs.stat(validPath);
+    if (stat.isDirectory()) {
+        const { stdout } = await execFileAsync('ls', ['-la', validPath]);
+        if (!Runtime.isInteractiveMode()) {
+            return Response.json({ result: stdout });
+        }
+        return EnconvoResponse.content([
+            ChatMessageContent.text(stdout)
+        ]);
+    }
+
     const fileType = getFileType(validPath);
 
     const isInteractiveMode = Runtime.isInteractiveMode();
@@ -56,6 +73,14 @@ export default async function main(request: Request): Promise<EnconvoResponse> {
             const contents: ChatMessageContent[] = [
                 ChatMessageContent.audio(fileUrl)
             ];
+            const resp = await NativeAPI.localApi('transcribe/transcribe_audio_video', {
+                filePaths: [fileUrl]
+            })
+            const json = await resp.json()
+            const transcript = json?.content
+
+            contents.push(ChatMessageContent.text(`${transcript}`))
+
             return EnconvoResponse.content(contents);
         }
 
@@ -63,6 +88,14 @@ export default async function main(request: Request): Promise<EnconvoResponse> {
             const contents: ChatMessageContent[] = [
                 ChatMessageContent.video(fileUrl)
             ];
+
+            const resp = await NativeAPI.localApi('transcribe/transcribe_audio_video', {
+                filePaths: [fileUrl]
+            })
+            const json = await resp.json()
+            const transcript = json?.content
+
+            contents.push(ChatMessageContent.text(`${transcript}`))
             return EnconvoResponse.content(contents);
         }
 
