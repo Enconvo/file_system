@@ -1,10 +1,16 @@
 {
   "$schema": "/Users/ysnows/Documents/Project/enconvo.com/public/schemas/extension.json",
   "name": "file_system",
-  "version": "0.0.130",
+  "version": "0.0.169",
   "description": "File system tools for AI agents: read, write, and edit files, search file contents with ripgrep (grep), and find files by glob patterns across text, documents, images, audio, and video.",
   "title": "File System",
   "icon": "icon.png",
+  "lifecycle": {
+    "onAppStarted": {
+      "type": "api",
+      "path": "file_system/on_app_started"
+    }
+  },
   "author": "Enconvo",
   "categories": [
     "Tool"
